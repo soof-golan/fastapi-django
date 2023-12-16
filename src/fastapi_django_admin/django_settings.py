@@ -37,6 +37,7 @@ ALLOWED_HOSTS = config.django_allowed_hosts
 
 INSTALLED_APPS = [
     "fastapi_django",
+    "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -121,3 +122,5 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SHELL_PLUS = "lab"

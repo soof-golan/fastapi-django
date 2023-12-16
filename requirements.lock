@@ -7,6 +7,7 @@
 #   all-features: false
 
 -e file:.
+a2wsgi==1.9.0
 annotated-types==0.6.0
 anyio==3.7.1
 asgiref==3.7.2

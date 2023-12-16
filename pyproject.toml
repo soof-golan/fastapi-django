@@ -12,6 +12,7 @@ dependencies = [
     "pydantic>=2.5.2",
     "pydantic-settings>=2.1.0",
     "dj-database-url>=2.1.0",
+    "a2wsgi>=1.9.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"

@@ -1,5 +1,5 @@
 """
-URL configuration for fastapi_django_admin project.
+URL configuration for django_stuff project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -20,12 +20,3 @@ from django.urls import path
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
-
-
-# Serve static files in development
-from django.conf import settings
-
-if settings.DEBUG:
-    from django.conf.urls.static import static
-
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

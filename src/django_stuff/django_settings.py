@@ -1,7 +1,7 @@
 """
 DO NOT CONFIGURE THIS FILE MANUALLY.
 
-ALL configuration should be driven by core/config.py.
+ALL configuration should be driven by config/config.py.
 
 ---
 
@@ -18,8 +18,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
-from core.config import Config
-from core.consts import PROJECT_ROOT_DIR
+from config.config import Config
+from config.consts import PROJECT_ROOT_DIR
 
 config = Config()
 

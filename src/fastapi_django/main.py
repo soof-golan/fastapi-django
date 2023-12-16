@@ -2,8 +2,8 @@ from a2wsgi import WSGIMiddleware
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
-from core.config import Config
-from core.consts import PROJECT_ROOT_DIR
+from config.config import Config
+from config.consts import PROJECT_ROOT_DIR
 from django_stuff.wsgi import application as django_application
 from fastapi_django.lifespan import lifespan
 from fastapi_django.router import router

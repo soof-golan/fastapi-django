@@ -1,0 +1,21 @@
+on:
+  workflow_call:
+    inputs:
+
+name: Apply Database Migrations (with Django)
+jobs:
+  migrate:
+    name: Apply Database Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rye
+        uses: eifinger/setup-rye@v1
+        with:
+          enable-cache: true
+      - name: Install Dependencies
+        run: rye sync --all-features
+      - name: Apply Database Migrations
+        run: rye migrate
+
+

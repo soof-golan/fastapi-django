@@ -3,6 +3,8 @@
 import fastapi_django.db.base
 from django.db import migrations, models
 
+import fastapi_django.db.primary_key
+
 
 class Migration(migrations.Migration):
     replaces = [
@@ -25,7 +27,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.UUIDField(
-                        default=fastapi_django.db.base.uuid_generate_v1mc,
+                        default=fastapi_django.db.pk.uuid_generate_v1mc,
                         editable=False,
                         primary_key=True,
                         serialize=False,

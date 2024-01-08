@@ -6,5 +6,6 @@ from django.contrib import admin
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_stuff.django_settings")
 
+# Automatically register all of our models with the Django Admin app.
 for model in apps.get_app_config("fastapi_django").get_models():
     admin.site.register(model)

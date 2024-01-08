@@ -31,7 +31,43 @@ dev-dependencies = [
     "jupyter>=1.0.0",
     "django-extensions>=3.2.3",
     "ipython>=8.18.1",
+    "httpx>=0.25.2",
+    "mypy>=1.7.1",
+    "django-stubs[compatible-mypy]>=4.2.7",
 ]
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[project.scripts]
+dev = 'fastapi_django.main:main'
+
+[tool.rye.scripts]
+"migrate:check" = "./manage.py check"
+"migrate:migrate" = "./manage.py migrate"
+django_shell = "./manage.py shell_plus"
+migrate = { chain = ["migrate:check", "migrate:migrate"] }
+test = 'pytest'
+format = "ruff format"
+lint = "ruff check"
+
+
+[tool.ruff]
+fix = true
+
+[tool.mypy]
+warn_unused_configs = true
+strict = true
+files = ["src", "tests"]
+exclude = [
+    'migrations',
+]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "django_stuff.django_settings"
+
+[[tool.mypy.overrides]]
+module = ["tests"]
+disallow_untyped_defs = false
+strict = false

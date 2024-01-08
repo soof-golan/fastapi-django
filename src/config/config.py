@@ -30,7 +30,7 @@ class Config(BaseSettings):
     )
 
     django_prefix: str = Field(
-        "/dj",
+        default="/dj",
         title="Django HTTP route prefix",
         description="""
         The prefix to mount the Django ASGI application at.

@@ -2,65 +2,50 @@
 
 import datetime
 import uuid
-from typing import Self, ClassVar
+from typing import Self, TypeVar
 
 from asgiref.sync import sync_to_async
 from django.db import models
+from django.db.models.query import QuerySet, Q
+from django_stubs_ext.db.models import TypedModelMeta
 
-
-def uuid_generate_v1mc() -> uuid.UUID:
-    """Return a version 1 UUID with a random node MAC address.
-
-    Timestamp locality + randomness provide useful properties for indexing.
-
-    Further reading on why this is a somewhat good idea:
-     - https://www.postgresql.org/docs/current/uuid-ossp.html
-     - https://www.edgedb.com/docs/stdlib/uuid#function::std::uuid_generate_v1mc
-    - https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format-04
-
-    Further reading on why uuid V4 is probably not the best idea:
-    - https://www.edgedb.com/docs/stdlib/uuid#function::std::uuid_generate_v4
-    """
-    from uuid import _random_getnode
-
-    return uuid.uuid1(node=_random_getnode())
+from fastapi_django.db.primary_key import uuid_generate_v1mc
 
 
 class DefaultQuerySet(models.QuerySet):
-    def delete(self: Self) -> Self:
-        return self.update(deleted_at=datetime.datetime.now(tz=datetime.UTC))
+    def delete(self: Self) -> tuple[int, dict[str, int]]:
+        self.update(deleted_at=datetime.datetime.now(tz=datetime.UTC))
+        return 0, {}
 
-    def hard_delete(self: Self) -> Self:
+    def hard_delete(self: Self) -> tuple[int, dict[str, int]]:
         return super().delete()
 
     ahard_delete = sync_to_async(hard_delete)
-    ahard_delete.alters_data = True
-    ahard_delete.queryset_only = True
+    ahard_delete.alters_data = True  # type: ignore[attr-defined]
+    ahard_delete.queryset_only = True  # type: ignore[attr-defined]
 
-    def restore(self):
+    def restore(self) -> int:
         # Undo soft delete
-        return super().update(deleted_at=None)
+        return self.update(deleted_at=None)
 
     arestore = sync_to_async(restore)
-    arestore.alters_data = True
-    arestore.queryset_only = True
+    arestore.alters_data = True  # type: ignore[attr-defined]
+    arestore.queryset_only = True  # type: ignore[attr-defined]
 
 
-class DefaultManager(models.Manager):
-    def get_queryset(self):
-        return DefaultQuerySet(self.model, using=self._db).exclude(
-            deleted_at__isnull=False,
-        )
+class DefaultManager(models.Manager.from_queryset(DefaultQuerySet)):
+    def get_queryset(self: Self):
+        return super().get_queryset().exclude(deleted_at__isnull=False)
 
 
 class DbBaseModel(models.Model):
     """All App models should inherit from this class.
 
     This class provides the following features:
-    - uuid primary key. Read More:
-        - https://www.postgresql.org/docs/current/uuid-ossp.html#UUID-OSSP-FUNCTIONS-SECT
-        -
-
+     - uuid v1 with random MAC address as primary key (A compromise between
+         sequential and random ids)
+     - updated_at and created_at timestamps
+     - soft deletes
     """
 
     objects = DefaultManager()
@@ -75,14 +60,14 @@ class DbBaseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True, default=None)
 
-    class Meta:
+    class Meta(TypedModelMeta):
         abstract = True
-        indexes: ClassVar[list[models.Index]] = [
+        indexes = [
             # Home for composite indexes
             models.Index(
                 fields=["id", "deleted_at"], name="%(class)s_id_deleted_at_idx"
             ),
         ]
-        constraints: ClassVar[list[models.UniqueConstraint]] = [
+        constraints = [
             # Home for unique constraints
         ]
